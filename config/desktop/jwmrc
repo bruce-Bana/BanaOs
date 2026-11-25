@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<JWM>
+  <RootMenu onroot="3">
+    <Program label="File Manager" icon="folder">pcmanfm</Program>
+    <Program label="Terminal" icon="terminal">lxterminal</Program>
+    <Separator/>
+    <Program label="Applications">/home/tc/banaos-menu</Program>
+    <Separator/>
+    <Restart label="Restart JWM"/>
+    <Exit label="Log out"/>
+  </RootMenu>
+  <Tray x="0" y="-1" width="100%" height="34" autohide="false" valign="bottom" halign="center">
+    <TrayButton label="Start" popup="BanaOS menu">root:3</TrayButton>
+    <Spacer width="8"/>
+    <TaskList maxwidth="220"/>
+    <Dock/>
+    <Clock format="%H:%M  %a %d %b"/>
+  </Tray>
+  <WindowStyle>
+    <Font>Sans-10</Font><Width>2</Width><Height>22</Height>
+    <Active><Text>#ffffff</Text><Title>#1769aa</Title><Outline>#0b3554</Outline></Active>
+    <Inactive><Text>#e8eef5</Text><Title>#34495e</Title><Outline>#202d3a</Outline></Inactive>
+  </WindowStyle>
+  <Desktops width="1" height="1"><Background type="solid">#16283d</Background></Desktops>
+</JWM>
