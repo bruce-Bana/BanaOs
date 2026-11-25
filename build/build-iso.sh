@@ -112,7 +112,10 @@ INFO
 
 out="$DIST/$DISTRO_NAME-$DISTRO_VERSION-x86_64.iso"
 rm -f "$out"
-xorriso -as mkisofs -r -J -l -V BANAOS_0_1 -o "$out" "$WORK/iso-root"
+# Replay the original boot catalog (BIOS/UEFI entries) instead of creating a
+# generic data ISO that would not be bootable.
+xorriso -indev "$BASE_ISO" -outdev "$out" -boot_image any replay \
+  -update_r "$WORK/iso-root" / -commit
 sha256sum "$out" > "$out.sha256"
 {
   echo "Distribution=$DISTRO_NAME"
