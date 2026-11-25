@@ -1,0 +1,1 @@
+BanaOS graphical session: startx launches ~/.xsession; JWM is the window manager.
