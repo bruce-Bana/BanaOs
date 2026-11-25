@@ -1,0 +1,1 @@
+The remaster must retain the upstream El Torito boot catalog and any EFI boot image. The build uses xorriso boot-image replay for this reason.
