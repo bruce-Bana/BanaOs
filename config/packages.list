@@ -1,0 +1,7 @@
+# Minimal graphical desktop for BanaOS; dependencies are resolved by the builder.
+Xorg-7.7.tcz
+Xprogs.tcz
+jwm.tcz
+pcmanfm.tcz
+lxterminal.tcz
+wbar.tcz
