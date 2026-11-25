@@ -114,8 +114,9 @@ out="$DIST/$DISTRO_NAME-$DISTRO_VERSION-x86_64.iso"
 rm -f "$out"
 # Replay the original boot catalog (BIOS/UEFI entries) instead of creating a
 # generic data ISO that would not be bootable.
-xorriso -indev "$BASE_ISO" -outdev "$out" -boot_image any replay \
-  -update_r "$WORK/iso-root" / -commit
+xorriso -indev "$BASE_ISO" -outdev "$out" \
+  -update_r "$WORK/iso-root" / \
+  -boot_image any replay -commit
 sha256sum "$out" > "$out.sha256"
 {
   echo "Distribution=$DISTRO_NAME"
