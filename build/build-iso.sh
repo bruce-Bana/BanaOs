@@ -72,6 +72,15 @@ done
 
 # Extract the original ISO tree while retaining its bootloader assets.
 xorriso -osirrox on -indev "$BASE_ISO" -extract / "$WORK/iso-root" >/dev/null
+
+# Tell Tiny Core to load extensions and restore mydata.tgz from the CD's cde directory.
+if [[ -f "$WORK/iso-root/boot/isolinux/isolinux.cfg" ]]; then
+  if grep -qE '^[[:space:]]*APPEND .*\\bcde\\b' "$WORK/iso-root/boot/isolinux/isolinux.cfg"; then
+    :
+  else
+    sed -i '/^[[:space:]]*APPEND /s/$/ cde/' "$WORK/iso-root/boot/isolinux/isolinux.cfg"
+  fi
+fi
 mkdir -p "$WORK/iso-root/cde/optional"
 cp "$EXT/"*.tcz "$WORK/iso-root/cde/optional/"
 cp "$EXT/"*.dep "$WORK/iso-root/cde/optional/" 2>/dev/null || true
