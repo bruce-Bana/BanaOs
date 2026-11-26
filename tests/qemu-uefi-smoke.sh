@@ -3,7 +3,7 @@ set -Eeuo pipefail
 ISO="${1:?Usage: qemu-uefi-smoke.sh path/to/BanaOS.iso}"
 command -v qemu-system-x86_64 >/dev/null
 command -v timeout >/dev/null
-OVMF_CODE="$(find /usr/share/OVMF /usr/share/qemu -type f -name 'OVMF_CODE*.fd' -print -quit 2>/dev/null || true)"
+OVMF_CODE="$(find /usr/share/OVMF /usr/share/qemu -name 'OVMF_CODE*.fd' -print -quit 2>/dev/null || true)"
 [[ -n "$OVMF_CODE" && -s "$OVMF_CODE" ]] || { echo "OVMF firmware not found" >&2; exit 2; }
 LOG="$(mktemp)"
 cleanup(){ rm -f "$LOG"; }
