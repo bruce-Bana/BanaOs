@@ -33,8 +33,15 @@ download_optional() {
   local relative="$1" destination="$2" root tmp
   tmp="$destination.part"
   rm -f "$tmp"
+  # Metadata is tiny and often absent for leaf extensions. Try the mirror
+  # that served the package first, then other mirrors with short timeouts.
+  local roots=("$LAST_MIRROR")
   for root in $MIRRORS; do
-    if curl --fail --location --silent --connect-timeout 10 --max-time 120 "$root/$relative" -o "$tmp" 2>/dev/null; then
+    [[ "$root" == "$LAST_MIRROR" ]] || roots+=("$root")
+  done
+  for root in "${roots[@]}"; do
+    [[ -n "$root" ]] || continue
+    if curl --fail --location --silent --connect-timeout 5 --max-time 12 "$root/$relative" -o "$tmp" 2>/dev/null; then
       mv "$tmp" "$destination"
       LAST_MIRROR="$root"
       return 0
