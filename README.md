@@ -15,7 +15,7 @@ BanaOS is an experimental x86_64 desktop Linux remaster based on Tiny Core Linux
 ## Build on Ubuntu 24.04
 ```bash
 sudo apt-get update
-sudo apt-get install -y xorriso curl wget
+sudo apt-get install -y xorriso curl wget grub-efi-amd64-bin mtools dosfstools
 bash tests/test-config.sh
 bash build/build-iso.sh
 ```
