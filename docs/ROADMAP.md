@@ -7,12 +7,12 @@
 - [x] Add HTTPS mirror fallback and upstream checksum verification.
 - [x] Preserve BIOS boot and add a GRUB UEFI boot image.
 - [x] Verify BIOS and EFI El Torito entries.
-- [x] Add an OVMF/QEMU UEFI kernel-boot smoke test.
+- [ ] Complete the OVMF/QEMU UEFI kernel-boot smoke test.
 - [ ] Complete a successful CI ISO build and publish its artifact.
 
 ## Bootable desktop
 - [ ] Test BIOS boot in QEMU.
-- [x] Test UEFI boot in QEMU/OVMF.
+- [ ] Test UEFI boot in QEMU/OVMF.
 - [ ] Verify Xorg auto-start, JWM, menu, taskbar, PCManFM and LXTerminal.
 - [ ] Verify keyboard, mouse, display, networking, audio and storage.
 - [ ] Verify backup/persistence and shutdown.
