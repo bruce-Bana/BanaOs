@@ -165,6 +165,7 @@ $DISTRO_NAME $DISTRO_VERSION
 Architecture: $TC_ARCH
 Base: Tiny Core CorePure64 $TC_VERSION
 Desktop: Xorg/JWM, PCManFM, LXTerminal
+Boot modes: BIOS + UEFI (GRUB EFI)
 Image type: experimental live ISO; no installer included
 Base ISO verification: $verify_status
 Resolved extensions: ${#seen[@]}
@@ -190,6 +191,7 @@ grep -qi 'EFI' "$DIST/boot-report.txt" || { echo "UEFI boot entry missing" >&2; 
   echo "Architecture=$TC_ARCH"
   echo "TinyCoreBase=$TC_VERSION"
   echo "ResolvedExtensions=${#seen[@]}"
+  echo "BootModes=BIOS,UEFI"
   echo "UpstreamVerification=$verify_status"
   echo "MirrorRoots=$MIRRORS"
   echo "Output=$(basename "$out")"
