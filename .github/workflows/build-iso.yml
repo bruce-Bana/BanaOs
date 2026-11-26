@@ -36,9 +36,8 @@ jobs:
           bash -n tests/qemu-uefi-smoke.sh
           bash tests/test-config.sh
       - name: Build BanaOS ISO
+        id: build_iso
         run: bash build/build-iso.sh
-      - name: Test UEFI boot in QEMU
-        run: bash tests/qemu-uefi-smoke.sh dist/BanaOS-0.1.1-x86_64.iso
       - name: Check ISO and boot metadata
         run: |
           test -s dist/BanaOS-0.1.1-x86_64.iso
@@ -47,7 +46,10 @@ jobs:
           grep -qi 'El Torito' dist/boot-report.txt
           grep -qi 'BIOS' dist/boot-report.txt
           grep -qi 'EFI' dist/boot-report.txt
+      - name: Test UEFI boot in QEMU
+        run: bash tests/qemu-uefi-smoke.sh dist/BanaOS-0.1.1-x86_64.iso
       - name: Upload ISO and checksums
+        if: always() && steps.build_iso.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: BanaOS-x86_64-${{ github.sha }}
