@@ -20,14 +20,14 @@ bash tests/test-config.sh
 bash build/build-iso.sh
 ```
 
-Output: `dist/BanaOS-0.1.0-x86_64.iso`, SHA-256 file, boot report and manifest. The build tries multiple HTTPS mirrors, verifies the upstream CorePure64 ISO using its published MD5 file, recursively downloads extension dependencies, and preserves the original ISO boot structures with xorriso.
+Output: `dist/BanaOS-0.1.1-x86_64.iso`, SHA-256 file, boot report and manifest. The build tries multiple HTTPS mirrors, verifies the upstream CorePure64 ISO using its published MD5 file, recursively downloads extension dependencies, and preserves the original BIOS boot structure, adds a GRUB-based UEFI boot image, and verifies both boot entries with xorriso. CI also runs a UEFI QEMU smoke test.
 
 ## Boot
 Use a trusted USB imaging tool or a virtual machine. This is a **live ISO only**; no disk installer is included. Back up important data before testing boot media.
 
 ## Current limitations
-- BIOS/UEFI firmware boot and hardware compatibility still need testing.
-- Desktop auto-start and persistence must be verified on real and virtual machines.
+- Physical hardware compatibility and full desktop validation still need testing.
+- Desktop auto-start and persistence must be verified on physical machines; CI checks that UEFI reaches the Linux init sequence.
 - No graphical installer, updater, recovery environment or signed release system yet.
 - BanaOS is an independent remaster, not an official Tiny Core release.
 
