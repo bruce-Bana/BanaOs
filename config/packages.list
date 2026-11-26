@@ -1,7 +1,5 @@
-# Minimal graphical desktop for BanaOS; dependencies are resolved by the builder.
-Xorg-7.7.tcz
-Xprogs.tcz
-jwm.tcz
+# Top-level extensions only; Tiny Core resolves their dependency metadata at boot.
+Xorg-jwm-desktop.tcz
+Xorg-fonts.tcz
 pcmanfm.tcz
 lxterminal.tcz
-wbar.tcz
