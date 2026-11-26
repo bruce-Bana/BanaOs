@@ -10,7 +10,7 @@ SKIP_MD5="${SKIP_MD5:-0}"
 MIRRORS="${TC_MIRROR_ROOTS:-$TC_MIRROR_ROOTS}"
 mkdir -p "$WORK" "$DIST" "$CACHE"
 need(){ command -v "$1" >/dev/null 2>&1 || { echo "Missing command: $1" >&2; exit 2; }; }
-for c in curl md5sum sha256sum awk sed tar xorriso sort grep; do need "$c"; done
+for c in curl md5sum sha256sum awk sed tar xorriso sort grep grub-mkstandalone mkfs.vfat mmd mcopy dd; do need "$c"; done
 
 LAST_MIRROR=""
 download_required() {
@@ -115,6 +115,20 @@ done
 
 # Extract the ISO and update files while preserving its original boot structures.
 xorriso -osirrox on -indev "$BASE_ISO" -extract / "$WORK/iso-root" >/dev/null
+# ISO directory entries are read-only. Make the tree editable for remastering.
+chmod -R u+w "$WORK/iso-root"
+# Build a FAT EFI System Partition with a self-contained GRUB x86_64 loader.
+EFI_IMG="$WORK/efiboot.img"
+EFI_BIN="$WORK/BOOTX64.EFI"
+grub-mkstandalone --format=x86_64-efi --output="$EFI_BIN" \
+  --locales="" --fonts="" \
+  --modules="part_gpt part_msdos iso9660 fat normal linux search search_fs_file serial all_video efi_gop efi_uga" \
+  "boot/grub/grub.cfg=$ROOT/config/boot/grub.cfg"
+dd if=/dev/zero of="$EFI_IMG" bs=1M count=16 status=none
+mkfs.vfat -F 16 "$EFI_IMG" >/dev/null
+mmd -i "$EFI_IMG" ::/EFI ::/EFI/BOOT
+mcopy -i "$EFI_IMG" "$EFI_BIN" ::/EFI/BOOT/BOOTX64.EFI
+cp "$EFI_IMG" "$WORK/iso-root/boot/efiboot.img"
 # ISO directory entries are normally read-only; make the extracted tree editable.
 chmod -R u+w "$WORK/iso-root"
 if [[ ! -f "$WORK/iso-root/boot/isolinux/isolinux.cfg" ]]; then
@@ -162,10 +176,14 @@ rm -f "$out"
 chmod -R a-w "$WORK/iso-root"
 xorriso -indev "$BASE_ISO" -outdev "$out" \
   -update_r "$WORK/iso-root" / \
-  -boot_image any replay -commit
+  -boot_image any replay \
+  -boot_image any efi_path=/boot/efiboot.img \
+  -efi_boot_part --efi-boot-image -commit
 xorriso -indev "$out" -report_el_torito plain > "$DIST/boot-report.txt" 2>&1
 grep -qi 'El Torito' "$DIST/boot-report.txt" || { echo "Boot catalog missing from remastered ISO" >&2; exit 1; }
-sha256sum "$out" > "$out.sha256"
+grep -qi 'BIOS' "$DIST/boot-report.txt" || { echo "BIOS boot entry missing" >&2; exit 1; }
+grep -qi 'EFI' "$DIST/boot-report.txt" || { echo "UEFI boot entry missing" >&2; exit 1; }
+(cd "$DIST" && sha256sum "$(basename "$out")" > "$(basename "$out").sha256")
 {
   echo "Distribution=$DISTRO_NAME"
   echo "Version=$DISTRO_VERSION"
