@@ -3,15 +3,30 @@ set -Eeuo pipefail
 ISO="${1:?Usage: qemu-uefi-smoke.sh path/to/BanaOS.iso}"
 command -v qemu-system-x86_64 >/dev/null
 command -v timeout >/dev/null
-OVMF_CODE="$(find /usr/share/OVMF /usr/share/qemu -name 'OVMF_CODE*.fd' -print -quit 2>/dev/null || true)"
-[[ -n "$OVMF_CODE" && -s "$OVMF_CODE" ]] || { echo "OVMF firmware not found" >&2; exit 2; }
-LOG="$(mktemp)"
-cleanup(){ rm -f "$LOG"; }
+# Use a matching writable OVMF variable store with its firmware code image.
+OVMF_CODE="$(find -L /usr/share/OVMF -maxdepth 1 -type f -name 'OVMF_CODE_4M.fd' -print -quit 2>/dev/null || true)"
+OVMF_VARS="$(find -L /usr/share/OVMF -maxdepth 1 -type f -name 'OVMF_VARS_4M.fd' -print -quit 2>/dev/null || true)"
+if [[ -z "$OVMF_CODE" || -z "$OVMF_VARS" ]]; then
+  OVMF_CODE="$(find -L /usr/share/OVMF -maxdepth 1 -type f -name 'OVMF_CODE.fd' -print -quit 2>/dev/null || true)"
+  OVMF_VARS="$(find -L /usr/share/OVMF -maxdepth 1 -type f -name 'OVMF_VARS.fd' -print -quit 2>/dev/null || true)"
+fi
+[[ -n "$OVMF_CODE" && -s "$OVMF_CODE" && -n "$OVMF_VARS" && -s "$OVMF_VARS" ]] || {
+  echo "Matching OVMF_CODE and OVMF_VARS firmware files were not found" >&2
+  find -L /usr/share/OVMF -maxdepth 1 -type f -printf '%f\n' 2>/dev/null || true
+  exit 2
+}
+TMP="$(mktemp -d)"
+LOG="$TMP/serial.log"
+VARS_COPY="$TMP/OVMF_VARS.fd"
+cp "$OVMF_VARS" "$VARS_COPY"
+cleanup(){ rm -rf "$TMP"; }
 trap cleanup EXIT
 set +e
 timeout --signal=TERM 55s qemu-system-x86_64 \
   -machine q35,accel=tcg -cpu max -m 1024 \
-  -bios "$OVMF_CODE" -cdrom "$ISO" -boot d \
+  -drive if=pflash,format=raw,unit=0,file="$OVMF_CODE",readonly=on \
+  -drive if=pflash,format=raw,unit=1,file="$VARS_COPY" \
+  -cdrom "$ISO" -boot order=d \
   -display none -serial "file:$LOG" -monitor none \
   -no-reboot -no-shutdown
 rc=$?
