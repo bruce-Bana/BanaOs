@@ -1,15 +1,22 @@
 # Building BanaOS
 
-Recommended host: Ubuntu 24.04 x86_64 with bash, curl, wget, xorriso, tar, awk, sed, md5sum and sha256sum.
+## Requirements
+Ubuntu 24.04 x86_64, Bash, curl, wget, xorriso, tar, awk, sed, md5sum and sha256sum.
 
+## Build
 ```bash
-sudo apt-get update
-sudo apt-get install -y xorriso curl wget
 bash tests/test-config.sh
 bash -n build/build-iso.sh
 bash build/build-iso.sh
 ```
 
-Environment overrides: `BASE_ISO`, `WORK_DIR`, `DIST_DIR`, `CACHE_DIR`, `TC_REPO`, and `SKIP_MD5=1`. The last option bypasses the upstream base-ISO MD5 check and must be used cautiously.
+The builder downloads CorePure64 17.1 from an HTTPS mirror, verifies its published MD5, resolves requested Tiny Core extensions and their dependencies recursively, checks extension MD5 files when published, and adds the extension cache and mydata backup to the CD extension directory. It then updates the original ISO tree with xorriso and replays the source boot settings rather than creating a generic non-bootable data disc.
 
-The build fetches the base ISO, verifies it, fetches requested Tiny Core extensions and dependency metadata, extracts the ISO with xorriso, adds the extension cache and Tiny Core home backup, then repacks the ISO. Output is in `dist/`.
+## Environment
+- BASE_ISO: use a local CorePure64 ISO.
+- WORK_DIR, DIST_DIR, CACHE_DIR: override build paths.
+- TC_MIRROR_ROOTS: space-separated HTTPS mirror roots.
+- SKIP_MD5=1: explicit opt-out from base ISO MD5 verification; only use after independent verification.
+
+## Output
+dist/BanaOS-0.1.0-x86_64.iso, SHA-256 checksum, boot report and build manifest.
