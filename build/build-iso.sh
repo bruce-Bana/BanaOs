@@ -129,6 +129,8 @@ mkfs.vfat -F 16 "$EFI_IMG" >/dev/null
 mmd -i "$EFI_IMG" ::/EFI ::/EFI/BOOT
 mcopy -i "$EFI_IMG" "$EFI_BIN" ::/EFI/BOOT/BOOTX64.EFI
 cp "$EFI_IMG" "$WORK/iso-root/boot/efiboot.img"
+mkdir -p "$WORK/iso-root/EFI/BOOT"
+cp "$EFI_BIN" "$WORK/iso-root/EFI/BOOT/BOOTX64.EFI"
 # ISO directory entries are normally read-only; make the extracted tree editable.
 chmod -R u+w "$WORK/iso-root"
 if [[ ! -f "$WORK/iso-root/boot/isolinux/isolinux.cfg" ]]; then
@@ -178,8 +180,10 @@ chmod -R a-w "$WORK/iso-root"
 xorriso -indev "$BASE_ISO" -outdev "$out" \
   -update_r "$WORK/iso-root" / \
   -boot_image any replay \
+  -boot_image any next \
+  -boot_image any platform_id=0xef \
   -boot_image any efi_path=/boot/efiboot.img \
-  -boot_image any efi_boot_part=--efi-boot-image -commit
+  -boot_image any efi_boot_part=--efi-boot-image -committ
 xorriso -indev "$out" -report_el_torito plain > "$DIST/boot-report.txt" 2>&1
 grep -qi 'El Torito' "$DIST/boot-report.txt" || { echo "Boot catalog missing from remastered ISO" >&2; exit 1; }
 grep -qi 'BIOS' "$DIST/boot-report.txt" || { echo "BIOS boot entry missing" >&2; exit 1; }
