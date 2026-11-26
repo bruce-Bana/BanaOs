@@ -42,7 +42,7 @@ jobs:
         run: |
           test -s dist/BanaOS-0.1.1-x86_64.iso
           test -s dist/BanaOS-0.1.1-x86_64.iso.sha256
-          sha256sum --check dist/BanaOS-0.1.1-x86_64.iso.sha256
+          (cd dist && sha256sum --check BanaOS-0.1.1-x86_64.iso.sha256)
           grep -qi 'El Torito' dist/boot-report.txt
           grep -qi 'BIOS' dist/boot-report.txt
           grep -qi 'EFI' dist/boot-report.txt
