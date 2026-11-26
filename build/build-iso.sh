@@ -179,7 +179,7 @@ xorriso -indev "$BASE_ISO" -outdev "$out" \
   -update_r "$WORK/iso-root" / \
   -boot_image any replay \
   -boot_image any efi_path=/boot/efiboot.img \
-  -efi_boot_part --efi-boot-image -commit
+  -boot_image any efi_boot_part=--efi-boot-image -commit
 xorriso -indev "$out" -report_el_torito plain > "$DIST/boot-report.txt" 2>&1
 grep -qi 'El Torito' "$DIST/boot-report.txt" || { echo "Boot catalog missing from remastered ISO" >&2; exit 1; }
 grep -qi 'BIOS' "$DIST/boot-report.txt" || { echo "BIOS boot entry missing" >&2; exit 1; }
