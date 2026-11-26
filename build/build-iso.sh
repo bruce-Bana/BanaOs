@@ -115,6 +115,8 @@ done
 
 # Extract the ISO and update files while preserving its original boot structures.
 xorriso -osirrox on -indev "$BASE_ISO" -extract / "$WORK/iso-root" >/dev/null
+# ISO directory entries are normally read-only; make the extracted tree editable.
+chmod -R u+w "$WORK/iso-root"
 if [[ ! -f "$WORK/iso-root/boot/isolinux/isolinux.cfg" ]]; then
   echo "Expected Tiny Core ISOLINUX configuration not found in base ISO." >&2
   exit 1
@@ -156,6 +158,8 @@ INFO
 
 out="$DIST/$DISTRO_NAME-$DISTRO_VERSION-x86_64.iso"
 rm -f "$out"
+# Restore read-only media permissions before importing the tree.
+chmod -R a-w "$WORK/iso-root"
 xorriso -indev "$BASE_ISO" -outdev "$out" \
   -update_r "$WORK/iso-root" / \
   -boot_image any replay -commit
