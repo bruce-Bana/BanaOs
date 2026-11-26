@@ -5,12 +5,14 @@
 - [x] Configure JWM desktop and Windows-inspired taskbar/menu.
 - [x] Resolve extension dependencies recursively.
 - [x] Add HTTPS mirror fallback and upstream checksum verification.
-- [x] Preserve original ISO boot structures and verify the boot catalog.
+- [x] Preserve BIOS boot and add a GRUB UEFI boot image.
+- [x] Verify BIOS and EFI El Torito entries.
+- [x] Add an OVMF/QEMU UEFI kernel-boot smoke test.
 - [ ] Complete a successful CI ISO build and publish its artifact.
 
 ## Bootable desktop
 - [ ] Test BIOS boot in QEMU.
-- [ ] Test UEFI boot in QEMU/OVMF if supported by the base ISO.
+- [x] Test UEFI boot in QEMU/OVMF.
 - [ ] Verify Xorg auto-start, JWM, menu, taskbar, PCManFM and LXTerminal.
 - [ ] Verify keyboard, mouse, display, networking, audio and storage.
 - [ ] Verify backup/persistence and shutdown.
