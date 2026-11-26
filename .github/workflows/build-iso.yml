@@ -8,6 +8,7 @@ on:
       - 'build/**'
       - 'config/**'
       - 'tests/**'
+      - 'docs/**'
       - '.github/workflows/build-iso.yml'
 
 permissions:
@@ -20,7 +21,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - name: Install build tools
@@ -30,11 +31,17 @@ jobs:
       - name: Validate scripts and configuration
         run: |
           bash -n build/build-iso.sh
-          bash -n config/desktop/xsession
-          bash -n config/desktop/banaos-menu
+          sh -n config/desktop/xsession
+          sh -n config/desktop/banaos-menu
           bash tests/test-config.sh
       - name: Build BanaOS ISO
         run: bash build/build-iso.sh
+      - name: Check ISO and boot metadata
+        run: |
+          test -s dist/BanaOS-0.1.0-x86_64.iso
+          test -s dist/BanaOS-0.1.0-x86_64.iso.sha256
+          sha256sum --check dist/BanaOS-0.1.0-x86_64.iso.sha256
+          grep -qi 'El Torito' dist/boot-report.txt
       - name: Upload ISO and checksums
         uses: actions/upload-artifact@v4
         with:
@@ -43,5 +50,6 @@ jobs:
             dist/*.iso
             dist/*.sha256
             dist/build-manifest.txt
+            dist/boot-report.txt
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 30
