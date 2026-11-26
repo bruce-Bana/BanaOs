@@ -17,7 +17,7 @@
 - [ ] Test at least two physical x86_64 PCs.
 
 ## Usability
-- [ ] BanaOS icon theme, wallpapers, shortcuts and polished app menu.
+- [ ] BanaOS icon theme, wallpaper, shortcuts and polished app menu.
 - [ ] First-boot setup and network status.
 - [ ] User-friendly package/extension manager.
 - [ ] Power, restart, logout and recovery flows.
