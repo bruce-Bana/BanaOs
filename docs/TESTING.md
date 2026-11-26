@@ -1,15 +1,18 @@
-# Testing BanaOS
+# BanaOS testing
 
-## Static checks
-```bash
-bash -n build/build-iso.sh
-bash -n config/desktop/xsession
-bash -n config/desktop/banaos-menu
-bash tests/test-config.sh
-```
+## Automated CI checks
+- Shell syntax and project configuration.
+- Base ISO checksum verification.
+- Recursive extension download and checksum verification.
+- ISO creation and SHA-256 verification.
+- El Torito boot catalog presence after remaster.
+- ISO and reports uploaded as a workflow artifact.
 
-A passing static test does not prove the ISO boots. Required VM matrix:
-- QEMU BIOS, 2 vCPU, 2 GiB RAM.
-- QEMU UEFI with OVMF, 2 vCPU, 2 GiB RAM.
+A successful build and boot catalog check are not the same as a successful guest OS boot.
 
-Verify display, keyboard, mouse, storage, networking, JWM menu/taskbar, file manager, terminal, shutdown/reboot and persistence. Do not install to a disk until a future installer has been tested with explicit safeguards.
+## Required manual boot matrix
+- QEMU BIOS: 2 vCPU, 1–2 GiB RAM.
+- QEMU UEFI/OVMF if supported by the original ISO boot layout.
+- Physical x86_64 laptop and desktop.
+
+Verify graphical session startup, display resolution, keyboard, mouse, file manager, terminal, Ethernet/Wi-Fi, storage, audio, shutdown/reboot and persistence. Do not install to a disk until a future installer has explicit safeguards and has been tested independently.
